@@ -1,29 +1,29 @@
 {
-  "name": "nestjs-business-central-graphql-api",
+  "name": "business-central-typescript",
+  "description": "Provides TypeScript interfaces and typesafe method definitions for interacting with Business Central APIs.",
   "version": "0.0.0-development",
   "main": "dist/index.js",
-  "author": "Hatkom",
+  "author": "Hatkom ApS",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hatkom-io/nestjs-business-central-graphql-api.git"
+    "url": "git+https://github.com/Hatkom-io/business-central-typescript.git"
   },
   "bugs": {
-    "url": "https://github.com/Hatkom-io/nestjs-business-central-graphql-api/issues"
+    "url": "https://github.com/Hatkom-io/business-central-typescript/issues"
   },
-  "homepage": "https://github.com/Hatkom-io/nestjs-business-central-graphql-api#readme",
+  "homepage": "https://github.com/Hatkom-io/business-central-typescript#readme",
   "scripts": {
     "build": "rm -rf ./dist && tsc",
     "bump": "bunx npm-check-updates -u --deep -p bun && bun i && bun update"
   },
   "keywords": [
-    "nestjs",
-    "graphql",
-    "business central",
-    "microsoft dynamics",
-    "rest",
+    "business-central",
+    "typescript",
+    "types",
     "api",
-    "integration"
+    "interfaces",
+    "microsoft-dynamics"
   ],
   "publishConfig": {
     "access": "public"
@@ -41,7 +41,7 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@biomejs/biome": "2.1.2",
-    "@types/node": "^24.3.0",
+    "@types/node": "^24.3.1",
     "typescript": "^5.9.2"
   },
   "trustedDependencies": [
