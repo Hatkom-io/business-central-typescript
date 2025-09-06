@@ -1,6 +1,6 @@
 # Business Central TypeScript Interfaces
 
-This package provides TypeScript interfaces and typesafe method definitions for interacting with Microsoft Dynamics 365 Business Central APIs. It does **not** expose a GraphQL API or server.
+This package provides TypeScript interfaces and typesafe method definitions for interacting with Microsoft Dynamics 365 Business Central APIs.
 
 ## Features
 - TypeScript interfaces for Business Central entities (e.g., Company, Vendor, Journal)
