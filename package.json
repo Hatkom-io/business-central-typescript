@@ -32,10 +32,7 @@
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.1.6",
     "@nestjs/core": "^11.1.6",
-    "@nestjs/graphql": "^13.1.0",
-    "apollo-server-express": "^3.13.0",
     "axios": "^1.11.0",
-    "graphql": "^16.11.0",
     "jwt-decode": "^4.0.0"
   },
   "devDependencies": {
