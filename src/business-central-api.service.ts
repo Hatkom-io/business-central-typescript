@@ -144,14 +144,16 @@ export class BusinessCentralApiService {
     return existingVendors
   }
 
-  patchVendor = ({
+  patchVendor = async ({
     environment = 'Production',
     companyId,
     vendorId,
     data,
-  }: PatchVendorArgs): Promise<unknown> => {
-    return firstValueFrom(
-      this.businessCentralHttpService.patch(
+  }: PatchVendorArgs): Promise<Vendor> => {
+    const {
+      data: { value },
+    } = await firstValueFrom(
+      this.businessCentralHttpService.patch<{ value: Vendor }>(
         `${environment}/api/v2.0/companies(${companyId})/vendors(${vendorId})`,
         data,
         {
@@ -161,19 +163,25 @@ export class BusinessCentralApiService {
         },
       ),
     )
+
+    return value
   }
 
-  postVendor = ({
+  postVendor = async ({
     environment = 'Production',
     companyId,
     data,
-  }: PostVendorArgs): Promise<unknown> => {
-    return firstValueFrom(
-      this.businessCentralHttpService.post(
+  }: PostVendorArgs): Promise<Vendor> => {
+    const {
+      data: { value },
+    } = await firstValueFrom(
+      this.businessCentralHttpService.post<{ value: Vendor }>(
         `${environment}/api/v2.0/companies(${companyId})/vendors`,
         data,
       ),
     )
+
+    return value
   }
 
   getJournals = async ({
