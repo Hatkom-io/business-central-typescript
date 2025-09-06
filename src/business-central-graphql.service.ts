@@ -5,6 +5,9 @@ import { firstValueFrom } from 'rxjs'
 import { MODULE_OPTIONS } from './constants'
 import { DefaultOptions } from './types'
 import { isTokenValid } from './util/jwt.util'
+import { Vendor } from './util/vendor.type'
+import { Journal, JournalLine } from './util/journal.type'
+import { Company } from './util/company.type'
 
 type GetTokenResponse = {
   token_type: string
@@ -16,87 +19,6 @@ type GetTokenResponse = {
 type Dimension = {
   id: string
   displayName: string
-}
-
-export type Journal = {
-  id: string
-  balancingAccountId: string
-  balancingAccountNumber: string
-  code: string
-  displayName: string
-  lastModifiedDateTime: Date
-  templateDisplayName: string
-}
-
-export type DimensionLine = {
-  id: string
-  code: string
-  parentId: string
-  parentType: string
-  displayName: string
-  valueId: string
-  valueCode: string
-  valueDisplayName: string
-}
-
-export type Company = {
-  id: string
-  systemVersion: string
-  timestamp: number
-  name: string
-  displayName: string
-  businessProfileId: string
-  systemCreatedAt: Date
-  systemCreatedBy: Date
-  systemModifiedAt: Date
-  systemModifiedBy: Date
-}
-
-export type JournalLine = {
-  accountId: string
-  accountNumber: string
-  accountType: string
-  amount: number
-  balanceAccountType: string
-  balancingAccountId: string
-  balancingAccountNumber: string
-  comment: string | null
-  description: string
-  documentNumber: string
-  externalDocumentNumber: string | null
-  id: string
-  journalDisplayName: string
-  journalId: string
-  lastModifiedDateTime: Date
-  lineNumber: number
-  postingDate: string
-  taxCode: string
-  dimensionLines?: DimensionLine[]
-}
-
-export type Vendor = {
-  id: string
-  number: string
-  displayName: string
-  addressLine1: string
-  addressLine2: string
-  city: string
-  state: string
-  country: string
-  postalCode: string
-  phoneNumber: string
-  email: string
-  website: string
-  taxRegistrationNumber: string
-  currencyId: string
-  currencyCode: string
-  irs1099Code: string
-  paymentTermsId: string
-  paymentMethodId: string
-  taxLiable: boolean
-  blocked: string
-  balance: number
-  lastModifiedDateTime: string
 }
 
 type SpecificEnvironmentArgs = {
