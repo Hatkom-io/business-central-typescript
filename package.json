@@ -1,0 +1,51 @@
+{
+  "name": "nestjs-business-central-graphql-api",
+  "version": "0.0.0-development",
+  "main": "dist/index.js",
+  "author": "Hatkom",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hatkom-io/nestjs-business-central-graphql-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Hatkom-io/nestjs-business-central-graphql-api/issues"
+  },
+  "homepage": "https://github.com/Hatkom-io/nestjs-business-central-graphql-api#readme",
+  "scripts": {
+    "build": "rm -rf ./dist && tsc",
+    "bump": "bunx npm-check-updates -u --deep -p bun && bun i && bun update"
+  },
+  "keywords": [
+    "nestjs",
+    "graphql",
+    "business central",
+    "microsoft dynamics",
+    "rest",
+    "api",
+    "integration"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@nestjs/axios": "^4.0.1",
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/graphql": "^13.1.0",
+    "apollo-server-express": "^3.13.0",
+    "axios": "^1.11.0",
+    "graphql": "^16.11.0",
+    "jwt-decode": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@biomejs/biome": "2.1.2",
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2"
+  },
+  "trustedDependencies": [
+    "@apollo/protobufjs",
+    "@nestjs/core"
+  ]
+}

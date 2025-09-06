@@ -1,0 +1,38 @@
+name: Bump Dependencies
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 3'
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Run Bun bump
+        run: bun bump
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b chore/bump || git checkout chore/bump
+          git add .
+          git commit -m "bump" || echo "No changes to commit"
+          git push origin chore/bump --force
+
+      - name: Create Pull Request
+        run: gh pr create -H chore/bump -B main --title 'Bump' --body 'Weekly bump dependencies' --label 'dependencies'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
