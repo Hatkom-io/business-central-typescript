@@ -1,7 +1,7 @@
 {
   "name": "@hatkom/business-central-typescript",
   "description": "Provides TypeScript interfaces and typesafe method definitions for interacting with Business Central APIs.",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "author": "Hatkom ApS",
   "license": "MIT",
