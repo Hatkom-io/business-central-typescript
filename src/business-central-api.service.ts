@@ -4,10 +4,10 @@ import axios from 'axios'
 import { firstValueFrom } from 'rxjs'
 import { MODULE_OPTIONS } from './constants'
 import { DefaultOptions } from './types'
+import { Company } from './util/company.type'
+import { Journal, JournalLine } from './util/journal.type'
 import { isTokenValid } from './util/jwt.util'
 import { Vendor } from './util/vendor.type'
-import { Journal, JournalLine } from './util/journal.type'
-import { Company } from './util/company.type'
 
 type GetTokenResponse = {
   token_type: string
@@ -77,7 +77,7 @@ export type PostAttachmentArgs = SpecificCompanyArgs & {
 }
 
 @Injectable()
-export class BusinessCentralGraphQLService {
+export class BusinessCentralApiService {
   private readonly businessCentralHttpService: HttpService
 
   private token: string | null = null
