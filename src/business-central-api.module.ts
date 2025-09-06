@@ -1,5 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { BusinessCentralApiService } from './business-central-api.service'
+import { MODULE_OPTIONS } from './constants'
 import { ModuleOptions } from './types'
 
 @Module({
@@ -12,7 +13,7 @@ export class BusinessCentralApiModule {
       module: BusinessCentralApiModule,
       providers: [
         {
-          provide: 'BUSINESS_CENTRAL_OPTIONS',
+          provide: MODULE_OPTIONS,
           useFactory: options.useFactory,
           inject: options.inject,
         },

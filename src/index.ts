@@ -1,2 +1,5 @@
-export { BusinessCentralApiModule } from './business-central-api.module'
-export { BusinessCentralApiService } from './business-central-api.service'
+export * from './business-central-api.module'
+export * from './business-central-api.service'
+export * from './util/company.type'
+export * from './util/journal.type'
+export * from './util/vendor.type'

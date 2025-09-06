@@ -26,7 +26,6 @@ type SpecificEnvironmentArgs = {
 }
 
 type SpecificCompanyArgs = SpecificEnvironmentArgs & {
-  parentId: string
   companyId: string
 }
 
@@ -72,6 +71,7 @@ export type GetJournalLinesArgs = SpecificCompanyArgs & {
 }
 export type GetCompaniesArgs = SpecificEnvironmentArgs
 export type PostAttachmentArgs = SpecificCompanyArgs & {
+  parentId: string
   buffer: Buffer
   name: string
 }
@@ -271,7 +271,7 @@ export class BusinessCentralApiService {
     name,
   }: PostAttachmentArgs): Promise<void> => {
     const fileData = new FormData()
-    const fileBlob = new Blob([buffer])
+    const fileBlob = new Blob([Uint8Array.from(buffer)])
     fileData.append('file', fileBlob)
 
     const token = await this.getValidToken()
