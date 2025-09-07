@@ -1,17 +1,17 @@
-export type Params<Fields> = {
+export type Params<Entity> = {
   filter?: {
     operation: 'startswith' | 'endswith' | 'contains'
-    field: Fields
+    field: Extract<keyof Entity, string>
     value: string
   }
   orderby?: {
-    field: Fields
+    field: Extract<keyof Entity, string>
     direction: 'asc' | 'desc'
   }
   top?: number
 }
 
-export const formatParams = (rawParams?: Params<unknown>) => {
+export const formatParams = <Entity>(rawParams?: Params<Entity>) => {
   if (!rawParams) {
     return undefined
   }
