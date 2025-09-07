@@ -5,8 +5,8 @@ export type Company = {
   name: string
   displayName: string
   businessProfileId: string
-  systemCreatedAt: Date
-  systemCreatedBy: Date
-  systemModifiedAt: Date
-  systemModifiedBy: Date
+  systemCreatedAt: string
+  systemCreatedBy: string
+  systemModifiedAt: string
+  systemModifiedBy: string
 }

@@ -1,11 +1,11 @@
 export type Params<Entity> = {
   filter?: {
     operation: 'startswith' | 'endswith' | 'contains'
-    field: Extract<keyof Entity, string>
+    field: Extract<keyof Entity, string> | string
     value: string
   }
   orderby?: {
-    field: Extract<keyof Entity, string>
+    field: Extract<keyof Entity, string> | string
     direction: 'asc' | 'desc'
   }
   top?: number

@@ -5,21 +5,16 @@ import { firstValueFrom } from 'rxjs'
 import { MODULE_OPTIONS } from './constants'
 import { DefaultOptions } from './types'
 import { Company } from './util/company.type'
-import { Journal, JournalLine } from './util/journal.type'
+import { DimensionLine, Journal, JournalLine } from './util/journal.type'
 import { isTokenValid } from './util/jwt.util'
-import { Vendor } from './util/vendor.type'
 import { formatParams, Params } from './util/param.util'
+import { Vendor } from './util/vendor.type'
 
 type GetTokenResponse = {
   token_type: string
   expires_in: number
   ext_expires_in: number
   access_token: string
-}
-
-type Dimension = {
-  id: string
-  displayName: string
 }
 
 type SpecificEnvironmentArgs = {
@@ -71,7 +66,7 @@ export type GetJournalsArgs = SpecificCompanyArgs & {
   params?: Params<Journal>
 }
 export type GetDimensionsArgs = SpecificCompanyArgs & {
-  params?: Params<Dimension>
+  params?: Params<DimensionLine>
 }
 export type GetJournalLinesArgs = SpecificCompanyArgs & {
   journalId: string
@@ -244,7 +239,7 @@ export class BusinessCentralApiService {
   getDimensions = ({
     companyId,
     ...args
-  }: GetDimensionsArgs): Promise<Dimension[]> =>
+  }: GetDimensionsArgs): Promise<DimensionLine[]> =>
     this.get({ ...args, url: `(${companyId})/dimensions` })
 
   postDimension = async ({
