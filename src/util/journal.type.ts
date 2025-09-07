@@ -4,7 +4,7 @@ export type Journal = {
   balancingAccountNumber: string
   code: string
   displayName: string
-  lastModifiedDateTime: Date
+  lastModifiedDateTime: string
   templateDisplayName: string
 }
 
@@ -34,7 +34,7 @@ export type JournalLine = {
   id: string
   journalDisplayName: string
   journalId: string
-  lastModifiedDateTime: Date
+  lastModifiedDateTime: string
   lineNumber: number
   postingDate: string
   taxCode: string

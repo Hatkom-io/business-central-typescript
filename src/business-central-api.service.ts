@@ -8,6 +8,7 @@ import { Company } from './util/company.type'
 import { Journal, JournalLine } from './util/journal.type'
 import { isTokenValid } from './util/jwt.util'
 import { Vendor } from './util/vendor.type'
+import { formatParams, Params } from './util/param.util'
 
 type GetTokenResponse = {
   token_type: string
@@ -29,7 +30,9 @@ type SpecificCompanyArgs = SpecificEnvironmentArgs & {
   companyId: string
 }
 
-export type GetVendorsArgs = SpecificCompanyArgs
+export type GetVendorsArgs = SpecificCompanyArgs & {
+  params?: Params<Vendor>
+}
 
 type VendorData = Pick<Vendor, 'displayName' | 'number'>
 
@@ -64,16 +67,29 @@ export type PostDimensionArgs = SpecificCompanyArgs & {
   valueCode: string
 }
 
-export type GetJournalsArgs = SpecificCompanyArgs
-export type GetDimensionsArgs = SpecificCompanyArgs
+export type GetJournalsArgs = SpecificCompanyArgs & {
+  params?: Params<Journal>
+}
+export type GetDimensionsArgs = SpecificCompanyArgs & {
+  params?: Params<Dimension>
+}
 export type GetJournalLinesArgs = SpecificCompanyArgs & {
   journalId: string
+  params?: Params<JournalLine>
 }
-export type GetCompaniesArgs = SpecificEnvironmentArgs
+export type GetCompaniesArgs = SpecificEnvironmentArgs & {
+  params?: Params<Company>
+}
 export type PostAttachmentArgs = SpecificCompanyArgs & {
   parentId: string
   buffer: Buffer
   name: string
+}
+
+type GetArgs<Entity> = {
+  environment?: string
+  url: string
+  params?: Params<Entity>
 }
 
 @Injectable()
@@ -129,20 +145,29 @@ export class BusinessCentralApiService {
     return this.token
   }
 
-  getVendors = async ({
+  private get = async <Entity>({
     environment = 'Production',
-    companyId,
-  }: GetVendorsArgs): Promise<Vendor[]> => {
+    url,
+    params: rawParams,
+  }: GetArgs<Entity>) => {
+    const params = formatParams(rawParams)
+
     const {
-      data: { value: existingVendors },
+      data: { value },
     } = await firstValueFrom(
-      this.businessCentralHttpService.get<{ value: Vendor[] }>(
-        `${environment}/api/v2.0/companies(${companyId})/vendors`,
+      this.businessCentralHttpService.get<{ value: Entity[] }>(
+        `${environment}/api/v2.0/companies${url}`,
+        {
+          params,
+        },
       ),
     )
 
-    return existingVendors
+    return value
   }
+
+  getVendors = ({ companyId, ...args }: GetVendorsArgs): Promise<Vendor[]> =>
+    this.get({ ...args, url: `(${companyId})/vendors` })
 
   patchVendor = async ({
     environment = 'Production',
@@ -184,34 +209,18 @@ export class BusinessCentralApiService {
     return value
   }
 
-  getJournals = async ({
-    environment = 'Production',
-    companyId,
-  }: GetJournalsArgs): Promise<Journal[]> => {
-    const {
-      data: { value },
-    } = await firstValueFrom(
-      this.businessCentralHttpService.get<{ value: Journal[] }>(
-        `${environment}/api/v2.0/companies(${companyId})/journals`,
-      ),
-    )
+  getJournals = ({ companyId, ...args }: GetJournalsArgs): Promise<Journal[]> =>
+    this.get({ ...args, url: `(${companyId})/journals` })
 
-    return value
-  }
-
-  getJournalLines = async ({
-    environment = 'Production',
+  getJournalLines = ({
     companyId,
     journalId,
-  }: GetJournalLinesArgs): Promise<JournalLine[]> => {
-    const { data } = await firstValueFrom(
-      this.businessCentralHttpService.get<{ value: JournalLine[] }>(
-        `${environment}/api/v2.0/companies(${companyId})/journals(${journalId})/journalLines`,
-      ),
-    )
-
-    return data.value
-  }
+    ...args
+  }: GetJournalLinesArgs): Promise<JournalLine[]> =>
+    this.get({
+      ...args,
+      url: `(${companyId})/journals(${journalId})/journalLines`,
+    })
 
   postJournalLine = async ({
     environment = 'Production',
@@ -229,32 +238,14 @@ export class BusinessCentralApiService {
     return data
   }
 
-  getCompanies = async ({
-    environment,
-  }: GetCompaniesArgs): Promise<Company[]> => {
-    const { data: companiesData } = await firstValueFrom(
-      this.businessCentralHttpService.get<{ value: Company[] }>(
-        `${environment}/api/v2.0/companies`,
-      ),
-    )
+  getCompanies = (args: GetCompaniesArgs): Promise<Company[]> =>
+    this.get({ ...args, url: '' })
 
-    return companiesData.value
-  }
-
-  getDimensions = async ({
+  getDimensions = ({
     companyId,
-    environment,
-  }: GetDimensionsArgs): Promise<Dimension[]> => {
-    const {
-      data: { value: dimensions },
-    } = await firstValueFrom(
-      this.businessCentralHttpService.get<{ value: Dimension[] }>(
-        `${environment}/api/v2.0/companies(${companyId})/dimensions`,
-      ),
-    )
-
-    return dimensions
-  }
+    ...args
+  }: GetDimensionsArgs): Promise<Dimension[]> =>
+    this.get({ ...args, url: `(${companyId})/dimensions` })
 
   postDimension = async ({
     id,
