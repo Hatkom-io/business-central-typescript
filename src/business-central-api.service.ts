@@ -45,7 +45,8 @@ export type PostJournalLineData = Pick<
   | 'balancingAccountNumber'
   | 'balanceAccountType'
   | 'documentNumber'
->
+> &
+  Partial<Pick<JournalLine, 'accountType'>>
 
 export type PostVendorArgs = SpecificCompanyArgs & {
   data: Partial<VendorData>
