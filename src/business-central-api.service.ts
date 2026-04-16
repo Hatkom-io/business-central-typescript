@@ -90,7 +90,7 @@ type GetArgs<Entity> = {
 
 @Injectable()
 export class BusinessCentralApiService {
-  private readonly businessCentralHttpService: HttpService
+  readonly businessCentralHttpService: HttpService
 
   private token: string | null = null
   private baseURL: string
