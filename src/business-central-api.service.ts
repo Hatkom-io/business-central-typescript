@@ -185,6 +185,24 @@ export class BusinessCentralApiService {
     return data
   }
 
+  patch = async <Entity, Data>({
+    url,
+    body,
+    headers,
+    params: rawParams,
+  }: PostArgs<Entity, Data>) => {
+    const params = formatParams(rawParams)
+
+    const { data } = await firstValueFrom(
+      this.businessCentralHttpService.patch<Entity>(url, body, {
+        params,
+        headers,
+      }),
+    )
+
+    return data
+  }
+
   private internalGet = async <Entity>({
     environment = 'Production',
     url,
