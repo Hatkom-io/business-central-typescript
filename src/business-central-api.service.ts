@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios'
 import { Inject, Injectable } from '@nestjs/common'
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import { firstValueFrom } from 'rxjs'
 import { MODULE_OPTIONS } from './constants'
 import { DefaultOptions } from './types'
@@ -83,9 +83,21 @@ export type PostAttachmentArgs = SpecificCompanyArgs & {
 }
 
 type GetArgs<Entity> = {
-  environment?: string
   url: string
   params?: Params<Entity>
+}
+
+type InternalGetArgs<Entity> = {
+  url: string
+  params?: Params<Entity>
+  environment?: string
+}
+
+type PostArgs<Entity, Data = object> = {
+  url: string
+  body: Data
+  params?: Params<Entity>
+  headers?: AxiosRequestConfig['headers']
 }
 
 @Injectable()
@@ -141,11 +153,43 @@ export class BusinessCentralApiService {
     return this.token
   }
 
-  private get = async <Entity>({
+  get = async <Entity>({ url, params: rawParams }: GetArgs<Entity>) => {
+    const params = formatParams(rawParams)
+
+    const {
+      data: { value },
+    } = await firstValueFrom(
+      this.businessCentralHttpService.get<{ value: Entity[] }>(url, {
+        params,
+      }),
+    )
+
+    return value
+  }
+
+  post = async <Entity, Data>({
+    url,
+    body,
+    headers,
+    params: rawParams,
+  }: PostArgs<Entity, Data>) => {
+    const params = formatParams(rawParams)
+
+    const { data } = await firstValueFrom(
+      this.businessCentralHttpService.post<Entity>(url, body, {
+        params,
+        headers,
+      }),
+    )
+
+    return data
+  }
+
+  private internalGet = async <Entity>({
     environment = 'Production',
     url,
     params: rawParams,
-  }: GetArgs<Entity>) => {
+  }: InternalGetArgs<Entity>) => {
     const params = formatParams(rawParams)
 
     const {
@@ -163,7 +207,7 @@ export class BusinessCentralApiService {
   }
 
   getVendors = ({ companyId, ...args }: GetVendorsArgs): Promise<Vendor[]> =>
-    this.get({ ...args, url: `(${companyId})/vendors` })
+    this.internalGet({ ...args, url: `(${companyId})/vendors` })
 
   patchVendor = async ({
     environment = 'Production',
@@ -206,14 +250,14 @@ export class BusinessCentralApiService {
   }
 
   getJournals = ({ companyId, ...args }: GetJournalsArgs): Promise<Journal[]> =>
-    this.get({ ...args, url: `(${companyId})/journals` })
+    this.internalGet({ ...args, url: `(${companyId})/journals` })
 
   getJournalLines = ({
     companyId,
     journalId,
     ...args
   }: GetJournalLinesArgs): Promise<JournalLine[]> =>
-    this.get({
+    this.internalGet({
       ...args,
       url: `(${companyId})/journals(${journalId})/journalLines`,
     })
@@ -235,13 +279,13 @@ export class BusinessCentralApiService {
   }
 
   getCompanies = (args: GetCompaniesArgs): Promise<Company[]> =>
-    this.get({ ...args, url: '' })
+    this.internalGet({ ...args, url: '' })
 
   getDimensions = ({
     companyId,
     ...args
   }: GetDimensionsArgs): Promise<DimensionLine[]> =>
-    this.get({ ...args, url: `(${companyId})/dimensions` })
+    this.internalGet({ ...args, url: `(${companyId})/dimensions` })
 
   postDimension = async ({
     id,
