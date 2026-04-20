@@ -38,5 +38,5 @@ export type JournalLine = {
   lineNumber: number
   postingDate: string
   taxCode: string
-  dimensionLines?: DimensionLine[]
+  dimensionLines: DimensionLine[] | null
 }
