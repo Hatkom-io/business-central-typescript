@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import axios, { AxiosRequestConfig } from 'axios'
 import { firstValueFrom } from 'rxjs'
 import { MODULE_OPTIONS } from './constants'
-import { DefaultOptions } from './types'
+import { ClientCredentialOptions, DefaultOptions } from './types'
 import { Company } from './util/company.type'
 import { DimensionLine, Journal, JournalLine } from './util/journal.type'
 import { isTokenValid } from './util/jwt.util'
@@ -126,6 +126,10 @@ export class BusinessCentralApiService {
   }
 
   private getValidToken = async (): Promise<string> => {
+    if (this.options.accessToken) {
+      return this.options.accessToken
+    }
+
     if (this.token && isTokenValid(this.token)) {
       return this.token
     }
@@ -143,8 +147,8 @@ export class BusinessCentralApiService {
       microsoftOnlineService.post<GetTokenResponse>('token', {
         grant_type: 'client_credentials',
         scope: 'https://api.businesscentral.dynamics.com/.default',
-        client_id: this.options.azureClientId,
-        client_secret: this.options.azureClientSecret,
+        client_id: (this.options as ClientCredentialOptions).azureClientId,
+        client_secret: (this.options as ClientCredentialOptions).azureClientSecret,
       }),
     )
 
