@@ -7,7 +7,7 @@ export type ClientCredentialOptions = {
   accessToken?: never
 }
 
-type PersonalTokenOptions = {
+export type PersonalTokenOptions = {
   msDynamicsTenantId: string
   accessToken: string
 }
