@@ -17,6 +17,13 @@ type GetTokenResponse = {
   access_token: string
 }
 
+// Rows per page, not a total — paging follows @odata.nextLink until BC stops
+// sending one, so the row count a caller gets back is never capped by this.
+const readPageSize = 5000
+// Runaway guard for a nextLink that never advances. Throws rather than
+// truncating, so it can never quietly return a short result the way $top does.
+const maxPageCount = 1000
+
 type SpecificEnvironmentArgs = {
   environment?: string
 }
@@ -93,6 +100,15 @@ type InternalGetArgs<Entity> = {
   environment?: string
 }
 
+type FetchAllPagesArgs = {
+  url: string
+  params?: Record<string, string>
+}
+
+type FetchPageArgs = FetchAllPagesArgs & {
+  page: number
+}
+
 type PostArgs<Entity, Data = object> = {
   url: string
   body: Data
@@ -153,19 +169,53 @@ export class BusinessCentralApiService {
     return this.token
   }
 
-  get = async <Entity>({ url, params: rawParams }: GetArgs<Entity>) => {
-    const params = formatParams(rawParams)
+  // Follows @odata.nextLink to exhaustion. BC suppresses the link whenever $top
+  // is set, so callers passing `top` keep their previous single-page behaviour.
+  private fetchAllPages = <Entity>({
+    url,
+    params,
+  }: FetchAllPagesArgs): Promise<Entity[]> => {
+    type Page = { value: Entity[]; '@odata.nextLink'?: string }
 
-    const {
-      data: { value },
-    } = await firstValueFrom(
-      this.businessCentralHttpService.get<{ value: Entity[] }>(url, {
-        params,
-      }),
-    )
+    const fetchPage = async ({
+      url: pageUrl,
+      params: pageParams,
+      page,
+    }: FetchPageArgs): Promise<Entity[]> => {
+      if (page >= maxPageCount) {
+        throw new Error(
+          `Business Central pagination exceeded ${maxPageCount} pages for ${url} — aborting to avoid a runaway loop`,
+        )
+      }
 
-    return value
+      const { data } = await firstValueFrom(
+        this.businessCentralHttpService.get<Page>(pageUrl, {
+          params: pageParams,
+          headers: { Prefer: `odata.maxpagesize=${readPageSize}` },
+        }),
+      )
+
+      const nextUrl = data['@odata.nextLink']
+
+      if (!nextUrl) {
+        return data.value
+      }
+
+      // The nextLink already carries the query, so params go on page 0 only.
+      return [
+        ...data.value,
+        ...(await fetchPage({ url: nextUrl, page: page + 1 })),
+      ]
+    }
+
+    return fetchPage({ url, params, page: 0 })
   }
+
+  get = <Entity>({
+    url,
+    params: rawParams,
+  }: GetArgs<Entity>): Promise<Entity[]> =>
+    this.fetchAllPages<Entity>({ url, params: formatParams(rawParams) })
 
   post = async <Entity, Data>({
     url,
@@ -203,26 +253,15 @@ export class BusinessCentralApiService {
     return data
   }
 
-  private internalGet = async <Entity>({
+  private internalGet = <Entity>({
     environment = 'Production',
     url,
     params: rawParams,
-  }: InternalGetArgs<Entity>) => {
-    const params = formatParams(rawParams)
-
-    const {
-      data: { value },
-    } = await firstValueFrom(
-      this.businessCentralHttpService.get<{ value: Entity[] }>(
-        `${environment}/api/v2.0/companies${url}`,
-        {
-          params,
-        },
-      ),
-    )
-
-    return value
-  }
+  }: InternalGetArgs<Entity>): Promise<Entity[]> =>
+    this.fetchAllPages<Entity>({
+      url: `${environment}/api/v2.0/companies${url}`,
+      params: formatParams(rawParams),
+    })
 
   getVendors = ({ companyId, ...args }: GetVendorsArgs): Promise<Vendor[]> =>
     this.internalGet({ ...args, url: `(${companyId})/vendors` })
