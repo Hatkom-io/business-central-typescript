@@ -29,17 +29,17 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs/axios": "^4.0.1",
-    "@nestjs/common": "^11.1.19",
-    "@nestjs/core": "^11.1.19",
-    "axios": "^1.15.0",
+    "@nestjs/axios": "^12.0.0",
+    "@nestjs/common": "^12.0.1",
+    "@nestjs/core": "^12.0.1",
+    "axios": "^1.20.0",
     "jwt-decode": "^4.0.0"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@biomejs/biome": "2.4.12",
-    "@types/node": "^25.6.0",
-    "typescript": "^5.9.2"
+    "@biomejs/biome": "2.5.11",
+    "@types/node": "^26.4.1",
+    "typescript": "^7.0.2"
   },
   "trustedDependencies": [
     "@apollo/protobufjs",
