@@ -64,6 +64,11 @@ export type PostJournalLineArgs = SpecificCompanyArgs & {
   data: PostJournalLineData
 }
 
+export type DeleteJournalLineArgs = SpecificCompanyArgs & {
+  journalId: string
+  journalLineId: string
+}
+
 export type PostDimensionArgs = SpecificCompanyArgs & {
   journalLineId: string
   id: string
@@ -333,6 +338,20 @@ export class BusinessCentralApiService {
     )
 
     return data
+  }
+
+  deleteJournalLine = async ({
+    environment = 'Production',
+    companyId,
+    journalId,
+    journalLineId,
+  }: DeleteJournalLineArgs): Promise<void> => {
+    await firstValueFrom(
+      this.businessCentralHttpService.delete(
+        `${environment}/api/v2.0/companies(${companyId})/journals(${journalId})/journalLines(${journalLineId})`,
+        { headers: { 'If-Match': '*' } },
+      ),
+    )
   }
 
   getCompanies = (args: GetCompaniesArgs): Promise<Company[]> =>
